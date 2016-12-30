@@ -1,0 +1,24 @@
+version: '2'
+services:
+    proxy:
+        image: ehazlett/docker-proxy:latest
+        container_name: "hostproxy"
+        command: -i
+        volumes:
+            - "/var/run/docker.sock:/var/run/docker.sock"
+        expose:
+            - "2375"
+
+    sandbox:
+        image: nginx
+        command: nginx
+        volumes:
+           - "./proxy/etc/nginx/nginx.conf:/etc/nginx/nginx.conf"
+        ports:
+           - "80:80"
+        depends_on:
+            - proxy
+        links:
+            - proxy
+        stdin_open: true
+

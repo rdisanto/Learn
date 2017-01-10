@@ -8,17 +8,22 @@ services:
             - "/var/run/docker.sock:/var/run/docker.sock"
         expose:
             - "2375"
-
-    sandbox:
-        image: nginx
-        command: nginx
-        volumes:
-           - "./proxy/etc/nginx/nginx.conf:/etc/nginx/nginx.conf"
         ports:
+            - "2375:2375"
+
+
+    caddy:
+        build: 
+           context: ./caddy
+           dockerfile: Dockerfile
+        container_name: "caddy"
+        ports: 
            - "80:80"
+           - "443:443"
+        volumes:
+           - "./application/:/srv"
+           - "./application/CaddyFile:/etc/Caddyfile"
         depends_on:
             - proxy
         links:
             - proxy
-        stdin_open: true
-
